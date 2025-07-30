@@ -1,0 +1,54 @@
+{
+	"name": "muvifind",
+	"version": "1.0.0",
+	"description": "A movie discovery app that lets you find movies by selecting your favorite actors",
+	"private": true,
+	"type": "module",
+	"keywords": [
+		"movie",
+		"discovery",
+		"actors",
+		"tmdb",
+		"react",
+		"react-router",
+		"cloudflare-workers",
+		"tailwindcss"
+	],
+	"author": "berkziya",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/berkziya/muvifind.git"
+	},
+	"homepage": "https://muvifind.berkziya.workers.dev",
+	"scripts": {
+		"build": "react-router build",
+		"cf-typegen": "wrangler types",
+		"deploy": "pnpm run build && wrangler deploy",
+		"dev": "react-router dev",
+		"postinstall": "pnpm run cf-typegen",
+		"preview": "pnpm run build && vite preview",
+		"typecheck": "pnpm run cf-typegen && react-router typegen && tsc -b",
+		"lint": "tsc --noEmit",
+		"start": "pnpm run dev"
+	},
+	"dependencies": {
+		"isbot": "^5.1.29",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1",
+		"react-router": "^7.7.1"
+	},
+	"devDependencies": {
+		"@cloudflare/vite-plugin": "^1.10.2",
+		"@react-router/dev": "^7.7.1",
+		"@tailwindcss/vite": "^4.1.11",
+		"@types/node": "^24.1.0",
+		"@types/react": "^19.1.9",
+		"@types/react-dom": "^19.1.7",
+		"tailwindcss": "^4.1.11",
+		"typescript": "^5.8.3",
+		"vite": "^7.0.6",
+		"vite-tsconfig-paths": "^5.1.4",
+		"wrangler": "^4.26.1"
+	}
+}
