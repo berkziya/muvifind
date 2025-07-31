@@ -93,12 +93,6 @@ export function MoviesGrid({ selectedActors, movies, isLoading }: MoviesGridProp
             )}
           </div>
         </div>
-        {/* Scroll indicator - only show when there are real movies */}
-        {movies.length > 0 && (
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-l from-purple-900 via-purple-900/80 to-transparent w-16 h-full flex items-center justify-end pr-2 pointer-events-none">
-            <div className="text-white/60 text-xs">→</div>
-          </div>
-        )}
       </div>
     </div>
   );
