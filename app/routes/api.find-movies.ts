@@ -16,13 +16,13 @@ export async function loader({ request, context }: LoaderArgs) {
   }
 
   try {
-    const TMDB_BEARER_TOKEN = context.cloudflare.env.TMDB_BEARER_TOKEN;
+    const TMDB_BEARER_TOKEN = await context.cloudflare.env.TMDB_BEARER_TOKEN.get();
     if (!TMDB_BEARER_TOKEN) {
       throw new Error("TMDB_BEARER_TOKEN not configured");
     }
 
     const actorIdArray = actorIds.split(',');
-    
+
     // Find movies for each actor and then find intersection
     const movieSets = await Promise.all(
       actorIdArray.map(async (actorId: string) => {
@@ -56,11 +56,11 @@ export async function loader({ request, context }: LoaderArgs) {
 
       // Find partial matches based on number of selected actors
       let movieResults: { movieId: number; actorCount: number; actors: string[] }[] = [];
-      
+
       if (actorIdArray.length > 1) {
         // Create a map of movies to actors who appear in them
         const movieActorMap: Record<number, string[]> = {};
-        
+
         movieSets.forEach((movies, actorIndex) => {
           movies.forEach((movieId: number) => {
             if (!movieActorMap[movieId]) {
@@ -69,11 +69,11 @@ export async function loader({ request, context }: LoaderArgs) {
             movieActorMap[movieId].push(actorIdArray[actorIndex]);
           });
         });
-        
+
         // For 2 actors: only show perfect matches
         // For 3+ actors: show partial matches (2+) + perfect matches
         const minActorCount = actorIdArray.length === 2 ? actorIdArray.length : 2;
-        
+
         movieResults = Object.entries(movieActorMap)
           .map(([movieId, actors]) => ({
             movieId: parseInt(movieId),
@@ -85,9 +85,9 @@ export async function loader({ request, context }: LoaderArgs) {
           // Sort by number of matching actors (most matches first)
           .sort((a, b) => b.actorCount - a.actorCount)
           .slice(0, 30); // Increased limit for more variety
-          
+
         const allMovieIds = movieResults.map(result => result.movieId);
-        
+
         // Use combined list (perfect + partial matches)
         return { movieIds: allMovieIds, movieResults };
       } else {
@@ -114,11 +114,11 @@ export async function loader({ request, context }: LoaderArgs) {
         }
 
         const movieData = await response.json() as any;
-        
+
         // Find which of our selected actors appear in this movie
         const movieResult = movieResults.find(r => r.movieId === movieId);
         const matchingActorCount = movieResult ? movieResult.actorCount : actorIdArray.length;
-        
+
         return {
           ...movieData,
           popularity: movieData.popularity || 0,

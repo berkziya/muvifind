@@ -16,7 +16,7 @@ export async function loader({ request, context }: LoaderArgs) {
   }
 
   try {
-    const TMDB_BEARER_TOKEN = context.cloudflare.env.TMDB_BEARER_TOKEN;
+    const TMDB_BEARER_TOKEN = await context.cloudflare.env.TMDB_BEARER_TOKEN.get();
     if (!TMDB_BEARER_TOKEN) {
       throw new Error("TMDB_BEARER_TOKEN not configured");
     }
@@ -26,7 +26,7 @@ export async function loader({ request, context }: LoaderArgs) {
     searchUrl.searchParams.set("query", query);
     searchUrl.searchParams.set("page", "1");
     searchUrl.searchParams.set("include_adult", "false"); // Filter out adult content
-    
+
     const response = await fetch(searchUrl.toString(), {
       headers: {
         'Accept': 'application/json',
@@ -40,48 +40,48 @@ export async function loader({ request, context }: LoaderArgs) {
     }
 
     const data = await response.json() as { results?: any[] };
-    
+
     // Enhanced filtering and sorting
     const actors = data.results?.filter((person: any) => {
       // Must be known for acting
       const isActor = person.known_for_department === "Acting";
-      
+
       // Must have some popularity (filter out obscure entries)
       const hasPopularity = person.popularity && person.popularity > 1;
-      
+
       // Must have known works in movies
-      const hasMovieWork = person.known_for?.some((work: any) => 
+      const hasMovieWork = person.known_for?.some((work: any) =>
         work.media_type === "movie" && work.popularity > 5
       );
-      
+
       // Must have a profile picture (improves visual experience)
       const hasPhoto = person.profile_path !== null;
-      
+
       return isActor && hasPopularity && (hasMovieWork || person.popularity > 10) && hasPhoto;
     })
-    .sort((a: any, b: any) => {
-      // Sort by popularity, but boost exact name matches
-      const aExactMatch = a.name.toLowerCase() === query.toLowerCase() ? 100 : 0;
-      const bExactMatch = b.name.toLowerCase() === query.toLowerCase() ? 100 : 0;
-      
-      const aScore = (a.popularity || 0) + aExactMatch;
-      const bScore = (b.popularity || 0) + bExactMatch;
-      
-      return bScore - aScore;
-    })
-    .slice(0, 8) || []; // Reduced to 8 for better quality
+      .sort((a: any, b: any) => {
+        // Sort by popularity, but boost exact name matches
+        const aExactMatch = a.name.toLowerCase() === query.toLowerCase() ? 100 : 0;
+        const bExactMatch = b.name.toLowerCase() === query.toLowerCase() ? 100 : 0;
+
+        const aScore = (a.popularity || 0) + aExactMatch;
+        const bScore = (b.popularity || 0) + bExactMatch;
+
+        return bScore - aScore;
+      })
+      .slice(0, 8) || []; // Reduced to 8 for better quality
 
     // If we get very few results, try a more lenient search
     if (actors.length < 3 && query.length > 2) {
       const lenientActors = data.results?.filter((person: any) => {
-        return person.known_for_department === "Acting" && 
-               person.popularity > 0.5 &&
-               person.profile_path !== null;
+        return person.known_for_department === "Acting" &&
+          person.popularity > 0.5 &&
+          person.profile_path !== null;
       })
-      .sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0))
-      .slice(0, 5) || [];
-      
-      return Response.json({ 
+        .sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0))
+        .slice(0, 5) || [];
+
+      return Response.json({
         results: lenientActors,
         fallback: true // Indicate this is a fallback search
       });

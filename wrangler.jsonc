@@ -1,19 +1,12 @@
-// Wrangler configuration for MuviFInd
-// Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
-// To deploy: pnpm run deploy
-// To set secrets: pnpm wrangler secret put TMDB_BEARER_TOKEN
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "muvifind",
-	"compatibility_date": "2025-07-26",
-	"compatibility_flags": ["nodejs_compat"],
 	"main": "./workers/app.ts",
-	"vars": {},
-	"observability": {
-		"enabled": true
-	},
-	"placement": { 
-		"mode": "smart" 
-	},
-	"send_metrics": false
+	"compatibility_date": "2025-08-13",
+	"secrets_store_secrets": [
+		{
+			"binding": "TMDB_BEARER_TOKEN",
+			"store_id": "75f667ef90cf4fb99d2770d929719625",
+			"secret_name": "TMDB_BEARER_TOKEN"
+		}
+	]
 }

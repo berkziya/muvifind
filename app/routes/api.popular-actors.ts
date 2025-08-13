@@ -9,7 +9,7 @@ interface LoaderArgs {
 
 export async function loader({ request, context }: LoaderArgs) {
   try {
-    const TMDB_BEARER_TOKEN = context.cloudflare.env.TMDB_BEARER_TOKEN;
+    const TMDB_BEARER_TOKEN = await context.cloudflare.env.TMDB_BEARER_TOKEN.get();
     if (!TMDB_BEARER_TOKEN) {
       throw new Error("TMDB_BEARER_TOKEN not configured");
     }
@@ -33,10 +33,10 @@ export async function loader({ request, context }: LoaderArgs) {
     }
 
     const data = await response.json() as { results?: any[] };
-    
+
     // Filter to only include actors and add popularity score
-    const actors = data.results?.filter((person: any) => 
-      person.known_for_department === "Acting" && 
+    const actors = data.results?.filter((person: any) =>
+      person.known_for_department === "Acting" &&
       person.profile_path &&
       person.known_for?.some((work: any) => work.media_type === "movie")
     ).map((person: any) => ({

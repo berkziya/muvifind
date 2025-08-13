@@ -16,13 +16,13 @@ export async function loader({ request, context }: LoaderArgs) {
   }
 
   try {
-    const TMDB_BEARER_TOKEN = context.cloudflare.env.TMDB_BEARER_TOKEN;
+    const TMDB_BEARER_TOKEN = await context.cloudflare.env.TMDB_BEARER_TOKEN.get();
     if (!TMDB_BEARER_TOKEN) {
       throw new Error("TMDB_BEARER_TOKEN not configured");
     }
 
     const actorIdArray = actorIds.split(',');
-    
+
     // Get movies for each selected actor with more details in single requests
     const actorMovies = await Promise.all(
       actorIdArray.map(async (actorId: string) => {
@@ -55,13 +55,13 @@ export async function loader({ request, context }: LoaderArgs) {
 
     // Get all unique movie IDs from selected actors
     const allMovieIds = [...new Set(actorMovies.flat())];
-    
+
     // Use more movies to get better recommendations
     const sampleMovieIds = allMovieIds.slice(0, 20);
-    
+
     // Get cast from these movies to find frequently co-appearing actors
     const castFrequency: Record<number, { count: number; actor: any }> = {};
-    
+
     await Promise.all(
       sampleMovieIds.map(async (movieId: number) => {
         try {
@@ -78,12 +78,12 @@ export async function loader({ request, context }: LoaderArgs) {
           if (!response.ok) return;
 
           const data = await response.json() as { cast?: any[] };
-          
+
           // Look at more cast members to get better recommendations
           data.cast?.slice(0, 20).forEach((person: any) => {
             // Skip if already selected
             if (actorIdArray.includes(person.id.toString())) return;
-            
+
             // Include actors even without photos for now, we'll filter later
             if (castFrequency[person.id]) {
               castFrequency[person.id].count++;
@@ -136,8 +136,8 @@ export async function loader({ request, context }: LoaderArgs) {
 
         if (popularResponse.ok) {
           const popularData = await popularResponse.json() as { results?: any[] };
-          return popularData.results?.filter((person: any) => 
-            person.known_for_department === "Acting" && 
+          return popularData.results?.filter((person: any) =>
+            person.known_for_department === "Acting" &&
             person.profile_path &&
             !actorIdArray.includes(person.id.toString()) &&
             !recommendedActors.find(a => a.id === person.id)
