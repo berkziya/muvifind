@@ -1,8 +1,18 @@
 @import "tailwindcss" source(".");
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  /* Bauhaus primary colors */
+  --color-bauhaus-red: #e63946;
+  --color-bauhaus-blue: #1d3557;
+  --color-bauhaus-yellow: #ffb703;
+  --color-bauhaus-black: #000000;
+  --color-bauhaus-white: #ffffff;
+  --color-bauhaus-gray: #e5e5e5;
 }
 
 /* Hide scrollbars while keeping scroll functionality */
@@ -16,9 +26,29 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-white text-black transition-colors duration-200;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+html.dark body {
+  @apply bg-[#0a0a0a] text-white;
+}
+
+/* Bauhaus geometric accent shapes */
+.bauhaus-circle {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.bauhaus-square {
+  position: absolute;
+  z-index: 0;
+}
+
+.bauhaus-triangle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 0;
 }
