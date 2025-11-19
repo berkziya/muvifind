@@ -28,18 +28,18 @@ export function ActorsGrid({
       <div className="text-center mb-4">
         <div className="flex items-center justify-center space-x-3 mb-3">
           <div className="w-12 h-1 bg-[#e63946]"></div>
-          <h3 className="text-xl font-black text-black uppercase tracking-tight">
+          <h3 className="text-xl font-black text-black dark:text-white uppercase tracking-tight">
             {selectedActors.length === 0 
               ? "Choose from Popular Actors" 
               : "Actors who worked with your selection"}
           </h3>
-          <div className="w-12 h-1 bg-[#1d3557]"></div>
+          <div className="w-12 h-1 bg-[#1d3557] dark:bg-[#a8dadc]"></div>
         </div>
         
         {selectedActors.length > 0 && (
           <div className="flex items-center justify-center space-x-4 mb-3">
-            <div className="flex items-center space-x-2 text-sm text-black">
-              <span className="bg-[#ffb703] text-black px-3 py-1 border-2 border-black text-xs font-black uppercase">
+            <div className="flex items-center space-x-2 text-sm text-black dark:text-white">
+              <span className="bg-[#ffb703] text-black px-3 py-1 border-2 border-black dark:border-white text-xs font-black uppercase">
                 {selectedActors.length} selected
               </span>
               <span className="hidden sm:inline font-bold">
@@ -49,7 +49,7 @@ export function ActorsGrid({
             {selectedActors.length > 1 && (
               <button
                 onClick={onClearAll}
-                className="text-xs text-[#e63946] hover:text-black font-bold uppercase underline transition-colors"
+                className="text-xs text-[#e63946] hover:text-black dark:hover:text-white font-bold uppercase underline transition-colors"
               >
                 Clear all
               </button>
@@ -85,7 +85,7 @@ export function ActorsGrid({
         <div className="text-center mt-6">
           <button
             onClick={onLoadMore}
-            className="group px-8 py-4 bg-[#1d3557] hover:bg-[#e63946] text-white font-black uppercase border-4 border-black transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 mx-auto"
+            className="group px-8 py-4 bg-[#1d3557] dark:bg-[#0d1b2a] hover:bg-[#e63946] text-white font-black uppercase border-4 border-black dark:border-white transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 mx-auto"
           >
             <span>Load More Actors</span>
             <span className="text-[#ffb703] text-sm font-bold">

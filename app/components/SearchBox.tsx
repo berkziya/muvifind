@@ -36,7 +36,6 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [searchSource, setSearchSource] = useState<string>('');
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -53,52 +52,17 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
         setIsLoading(true);
         
         try {
-          // Start with instant TMDB results for speed
           const tmdbResponse = await fetch(`/api/search-actors?query=${encodeURIComponent(searchTerm)}`);
           
           if (tmdbResponse.ok) {
             const tmdbData = await tmdbResponse.json() as SearchResponse;
-            if (tmdbData.results && tmdbData.results.length > 0) {
-              // Show TMDB results immediately
-              setResults(tmdbData.results);
-              setSearchSource('tmdb_instant');
-              setIsLoading(false);
-              
-              // Then try to enhance with Wikidata in the background (no await)
-              fetch(`/api/search-actors-wikidata?query=${encodeURIComponent(searchTerm)}`)
-                .then(response => response.ok ? response.json() : null)
-                .then((wikidataData: any) => {
-                  if (wikidataData?.results && wikidataData.results.length > 0) {
-                    // Only update if we still have the same search term and no new search started
-                    if (query.trim() === searchTerm) {
-                      setResults(wikidataData.results);
-                      setSearchSource('wikidata_enhanced');
-                    }
-                  }
-                })
-                .catch(() => {
-                  // Silently fail - we already have TMDB results
-                });
-              
-              return;
-            }
-          }
-          
-          // If TMDB has no results, try Wikidata as primary source
-          const wikidataResponse = await fetch(`/api/search-actors-wikidata?query=${encodeURIComponent(searchTerm)}`);
-          
-          if (wikidataResponse.ok) {
-            const wikidataData = await wikidataResponse.json() as SearchResponse;
-            setResults(wikidataData.results || []);
-            setSearchSource('wikidata_primary');
+            setResults(tmdbData.results || []);
           } else {
             setResults([]);
-            setSearchSource('error');
           }
         } catch (error) {
           console.error('Search error:', error);
           setResults([]);
-          setSearchSource('error');
         }
         
         setIsLoading(false);
@@ -114,7 +78,6 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
     } else {
       setResults([]);
       setIsOpen(false);
-      setSearchSource('');
     }
   }, [query, searchActors]);
 
@@ -160,10 +123,10 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for actors (e.g., Tom Hanks, Meryl Streep)..."
-          className="w-full px-4 py-3 pl-10 bg-[#e5e5e5] border-2 border-black text-black placeholder-gray-600 focus:outline-none focus:border-[#e63946] transition-all duration-200 font-medium"
+          className="w-full px-4 py-3 pl-10 bg-[#e5e5e5] dark:bg-[#2b2b2b] border-2 border-black dark:border-white text-black dark:text-white placeholder-gray-600 dark:placeholder-gray-400 focus:outline-none focus:border-[#e63946] transition-all duration-200 font-medium"
         />
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-          <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-black dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -176,31 +139,15 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
 
       {/* Search Results Dropdown */}
       {isOpen && (query.trim().length >= 2 || results.length > 0 || isLoading) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-black shadow-2xl z-50 max-h-80 overflow-y-auto">
-          {searchSource === 'tmdb_instant' && (
-            <div className="px-4 py-2 text-xs text-[#1d3557] bg-[#ffb703] border-b-2 border-black flex items-center space-x-2 font-bold">
-              <div className="w-3 h-3 border-2 border-[#1d3557] border-t-transparent rounded-full animate-spin"></div>
-              <span>Instant TMDB results - enhancing with Wikidata...</span>
-            </div>
-          )}
-          {searchSource === 'wikidata_enhanced' && (
-            <div className="px-4 py-2 text-xs text-white bg-[#1d3557] border-b-2 border-black font-bold">
-              Enhanced results from Wikidata + TMDB
-            </div>
-          )}
-          {searchSource === 'wikidata_primary' && (
-            <div className="px-4 py-2 text-xs text-white bg-[#1d3557] border-b-2 border-black font-bold">
-              Enhanced Wikidata search results
-            </div>
-          )}
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1a1a1a] border-2 border-black dark:border-white shadow-2xl z-50 max-h-80 overflow-y-auto">
           {isLoading ? (
             // Skeleton loading state
             Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="w-full p-3 flex items-center space-x-3 animate-pulse border-b border-gray-300 last:border-b-0">
-                <div className="flex-shrink-0 w-12 h-12 bg-[#e5e5e5]"></div>
+              <div key={index} className="w-full p-3 flex items-center space-x-3 animate-pulse border-b border-gray-300 dark:border-gray-700 last:border-b-0">
+                <div className="flex-shrink-0 w-12 h-12 bg-[#e5e5e5] dark:bg-[#2b2b2b]"></div>
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-[#e5e5e5] w-3/4"></div>
-                  <div className="h-3 bg-[#e5e5e5] w-1/2"></div>
+                  <div className="h-4 bg-[#e5e5e5] dark:bg-[#2b2b2b] w-3/4"></div>
+                  <div className="h-3 bg-[#e5e5e5] dark:bg-[#2b2b2b] w-1/2"></div>
                 </div>
               </div>
             ))
@@ -215,13 +162,13 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
                   key={result.id}
                   onClick={() => handleSelectActor(result)}
                   disabled={isSelected}
-                  className={`w-full p-3 flex items-center space-x-3 transition-colors duration-150 border-b border-gray-300 last:border-b-0 ${
+                  className={`w-full p-3 flex items-center space-x-3 transition-colors duration-150 border-b border-gray-300 dark:border-gray-700 last:border-b-0 ${
                     isSelected 
                       ? 'opacity-50 cursor-not-allowed bg-[#ffb703]' 
-                      : 'hover:bg-[#e5e5e5]'
+                      : 'hover:bg-[#e5e5e5] dark:hover:bg-[#2b2b2b]'
                   }`}
                 >
-                  <div className="flex-shrink-0 w-12 h-12 overflow-hidden bg-[#1d3557] border-2 border-black">
+                  <div className="flex-shrink-0 w-12 h-12 overflow-hidden bg-[#1d3557] border-2 border-black dark:border-white">
                     {result.profile_path ? (
                       <img
                         src={`https://image.tmdb.org/t/p/w92${result.profile_path}`}
@@ -230,19 +177,26 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white text-xs">
-                        👤
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 text-left min-w-0">
-                    <div className={`font-bold truncate ${isSelected ? 'text-[#e63946]' : 'text-black'}`}>
+                    <div className={`font-bold truncate ${isSelected ? 'text-[#e63946]' : 'text-black dark:text-white'}`}>
                       {result.name}
                       {isSelected && (
-                        <span className="ml-2 text-xs">✓ Selected</span>
+                        <span className="ml-2 text-xs flex items-center inline-flex">
+                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Selected
+                        </span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-600 truncate">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
                       {displayDescription || `Popularity: ${result.popularity.toFixed(1)}`}
                     </div>
                   </div>
@@ -250,10 +204,14 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
               );
             })
           ) : query.trim() && !isLoading && results.length === 0 ? (
-            <div className="p-4 text-center text-black">
-              <div className="text-2xl mb-2">🔍</div>
+            <div className="p-4 text-center text-black dark:text-white">
+              <div className="w-12 h-12 mx-auto mb-2 text-[#1d3557] dark:text-[#a8dadc]">
+                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
               <div className="font-bold">No actors found for "{query}"</div>
-              <div className="text-xs mt-1 text-gray-600">Try searching with first and last name</div>
+              <div className="text-xs mt-1 text-gray-600 dark:text-gray-400">Try searching with first and last name</div>
             </div>
           ) : null}
         </div>
