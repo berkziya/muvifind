@@ -24,28 +24,32 @@ export function ActorsGrid({
 }: ActorsGridProps) {
   return (
     <div className="mb-6">
-      {/* Enhanced Header with Selected Actors Info */}
+      {/* Bauhaus Header with Selected Actors Info */}
       <div className="text-center mb-4">
-        <h3 className="text-lg font-semibold text-white mb-2">
-          {selectedActors.length === 0 
-            ? "Choose from Popular Actors" 
-            : "Actors who worked with your selection"}
-        </h3>
+        <div className="flex items-center justify-center space-x-3 mb-3">
+          <div className="w-12 h-1 bg-[#e63946]"></div>
+          <h3 className="text-xl font-black text-black uppercase tracking-tight">
+            {selectedActors.length === 0 
+              ? "Choose from Popular Actors" 
+              : "Actors who worked with your selection"}
+          </h3>
+          <div className="w-12 h-1 bg-[#1d3557]"></div>
+        </div>
         
         {selectedActors.length > 0 && (
           <div className="flex items-center justify-center space-x-4 mb-3">
-            <div className="flex items-center space-x-2 text-sm text-gray-300">
-              <span className="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+            <div className="flex items-center space-x-2 text-sm text-black">
+              <span className="bg-[#ffb703] text-black px-3 py-1 border-2 border-black text-xs font-black uppercase">
                 {selectedActors.length} selected
               </span>
-              <span className="hidden sm:inline">
+              <span className="hidden sm:inline font-bold">
                 {selectedActors.map(a => a.name).join(", ")}
               </span>
             </div>
             {selectedActors.length > 1 && (
               <button
                 onClick={onClearAll}
-                className="text-xs text-red-400 hover:text-red-300 underline transition-colors"
+                className="text-xs text-[#e63946] hover:text-black font-bold uppercase underline transition-colors"
               >
                 Clear all
               </button>
@@ -76,15 +80,15 @@ export function ActorsGrid({
         ))}
       </div>
       
-      {/* Load More Button - Enhanced */}
+      {/* Load More Button - Bauhaus Style */}
       {!isLoadingActors && displayedActors.length > 0 && displayedActors.length < allActors.length && selectedActors.length === 0 && (
         <div className="text-center mt-6">
           <button
             onClick={onLoadMore}
-            className="group px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 mx-auto"
+            className="group px-8 py-4 bg-[#1d3557] hover:bg-[#e63946] text-white font-black uppercase border-4 border-black transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2 mx-auto"
           >
             <span>Load More Actors</span>
-            <span className="text-purple-200 text-sm">
+            <span className="text-[#ffb703] text-sm font-bold">
               ({allActors.length - displayedActors.length} remaining)
             </span>
             <svg 

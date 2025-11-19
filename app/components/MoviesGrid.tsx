@@ -12,12 +12,13 @@ export function MoviesGrid({ selectedActors, movies, isLoading }: MoviesGridProp
     return (
       <div className="mb-6">
         <div className="flex items-center justify-center mb-6 py-6">
-          <div className="text-center max-w-md">
-            <div className="text-6xl mb-4">🎬</div>
-            <h3 className="text-2xl font-bold text-gray-400 mb-2">
+          <div className="text-center max-w-md relative">
+            <div className="absolute -top-4 -left-4 w-16 h-16 bg-[#ffb703] opacity-50 rotate-45"></div>
+            <div className="text-6xl mb-4 relative z-10">🎬</div>
+            <h3 className="text-2xl font-black text-black mb-2 uppercase">
               Ready to Discover Movies?
             </h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-[#1d3557] text-sm leading-relaxed font-medium">
               Search for actors above or select from the popular ones below. 
               Your movie recommendations will appear here!
             </p>
@@ -40,9 +41,11 @@ export function MoviesGrid({ selectedActors, movies, isLoading }: MoviesGridProp
     <div className="mb-6">
       <div className="flex items-center justify-center mb-4 py-4">
         <div className="text-center max-w-2xl">
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <span className="text-2xl">🎭</span>
-            <h3 className="text-xl font-bold text-white">
+          <div className="flex items-center justify-center space-x-3 mb-2">
+            <div className="w-8 h-8 bg-[#e63946] flex items-center justify-center">
+              <span className="text-xl">🎭</span>
+            </div>
+            <h3 className="text-xl font-black text-black uppercase">
               Movies with {selectedActors.length === 1 
                 ? selectedActors[0].name 
                 : selectedActors.length === 2
@@ -54,20 +57,20 @@ export function MoviesGrid({ selectedActors, movies, isLoading }: MoviesGridProp
           {selectedActors.length > 2 && movies.length > 0 && (
             <div className="flex items-center justify-center space-x-4 text-sm">
               <span className="flex items-center space-x-1">
-                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                <span className="text-green-400">Perfect matches</span>
+                <span className="w-3 h-3 bg-[#ffb703] border-2 border-black"></span>
+                <span className="text-black font-bold">Perfect matches</span>
               </span>
               <span className="flex items-center space-x-1">
-                <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
-                <span className="text-orange-400">Partial matches</span>
+                <span className="w-3 h-3 bg-[#e63946] border-2 border-black"></span>
+                <span className="text-black font-bold">Partial matches</span>
               </span>
             </div>
           )}
           {/* Fixed height container for loading state to prevent layout shift */}
           <div className="h-6 flex items-center justify-center">
             {isLoading && (
-              <p className="text-gray-400 text-sm">
-                <span className="inline-block w-2 h-2 bg-purple-400 rounded-full animate-pulse mr-2"></span>
+              <p className="text-black text-sm font-bold">
+                <span className="inline-block w-2 h-2 bg-[#1d3557] rounded-full animate-pulse mr-2"></span>
                 Finding movies...
               </p>
             )}

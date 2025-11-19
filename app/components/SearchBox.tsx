@@ -160,47 +160,47 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for actors (e.g., Tom Hanks, Meryl Streep)..."
-          className="w-full px-4 py-3 pl-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-200"
+          className="w-full px-4 py-3 pl-10 bg-[#e5e5e5] border-2 border-black text-black placeholder-gray-600 focus:outline-none focus:border-[#e63946] transition-all duration-200 font-medium"
         />
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
         {isLoading && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <div className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-[#e63946] border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
       </div>
 
       {/* Search Results Dropdown */}
       {isOpen && (query.trim().length >= 2 || results.length > 0 || isLoading) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-2xl z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-black shadow-2xl z-50 max-h-80 overflow-y-auto">
           {searchSource === 'tmdb_instant' && (
-            <div className="px-4 py-2 text-xs text-blue-400 bg-blue-400/10 border-b border-white/10 flex items-center space-x-2">
-              <div className="w-3 h-3 border border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            <div className="px-4 py-2 text-xs text-[#1d3557] bg-[#ffb703] border-b-2 border-black flex items-center space-x-2 font-bold">
+              <div className="w-3 h-3 border-2 border-[#1d3557] border-t-transparent rounded-full animate-spin"></div>
               <span>Instant TMDB results - enhancing with Wikidata...</span>
             </div>
           )}
           {searchSource === 'wikidata_enhanced' && (
-            <div className="px-4 py-2 text-xs text-green-400 bg-green-400/10 border-b border-white/10">
+            <div className="px-4 py-2 text-xs text-white bg-[#1d3557] border-b-2 border-black font-bold">
               Enhanced results from Wikidata + TMDB
             </div>
           )}
           {searchSource === 'wikidata_primary' && (
-            <div className="px-4 py-2 text-xs text-green-400 bg-green-400/10 border-b border-white/10">
+            <div className="px-4 py-2 text-xs text-white bg-[#1d3557] border-b-2 border-black font-bold">
               Enhanced Wikidata search results
             </div>
           )}
           {isLoading ? (
             // Skeleton loading state
             Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="w-full p-3 flex items-center space-x-3 animate-pulse">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-600"></div>
+              <div key={index} className="w-full p-3 flex items-center space-x-3 animate-pulse border-b border-gray-300 last:border-b-0">
+                <div className="flex-shrink-0 w-12 h-12 bg-[#e5e5e5]"></div>
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-gray-600 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                  <div className="h-4 bg-[#e5e5e5] w-3/4"></div>
+                  <div className="h-3 bg-[#e5e5e5] w-1/2"></div>
                 </div>
               </div>
             ))
@@ -215,13 +215,13 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
                   key={result.id}
                   onClick={() => handleSelectActor(result)}
                   disabled={isSelected}
-                  className={`w-full p-3 flex items-center space-x-3 transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl ${
+                  className={`w-full p-3 flex items-center space-x-3 transition-colors duration-150 border-b border-gray-300 last:border-b-0 ${
                     isSelected 
-                      ? 'opacity-50 cursor-not-allowed bg-green-400/20' 
-                      : 'hover:bg-purple-400/20'
+                      ? 'opacity-50 cursor-not-allowed bg-[#ffb703]' 
+                      : 'hover:bg-[#e5e5e5]'
                   }`}
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden bg-gray-700">
+                  <div className="flex-shrink-0 w-12 h-12 overflow-hidden bg-[#1d3557] border-2 border-black">
                     {result.profile_path ? (
                       <img
                         src={`https://image.tmdb.org/t/p/w92${result.profile_path}`}
@@ -230,19 +230,19 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-white text-xs">
                         👤
                       </div>
                     )}
                   </div>
                   <div className="flex-1 text-left min-w-0">
-                    <div className={`font-medium truncate ${isSelected ? 'text-green-400' : 'text-white'}`}>
+                    <div className={`font-bold truncate ${isSelected ? 'text-[#e63946]' : 'text-black'}`}>
                       {result.name}
                       {isSelected && (
                         <span className="ml-2 text-xs">✓ Selected</span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-400 truncate">
+                    <div className="text-xs text-gray-600 truncate">
                       {displayDescription || `Popularity: ${result.popularity.toFixed(1)}`}
                     </div>
                   </div>
@@ -250,10 +250,10 @@ export function SearchBox({ onSelectActor, selectedActors }: SearchBoxProps) {
               );
             })
           ) : query.trim() && !isLoading && results.length === 0 ? (
-            <div className="p-4 text-center text-gray-400">
+            <div className="p-4 text-center text-black">
               <div className="text-2xl mb-2">🔍</div>
-              <div>No actors found for "{query}"</div>
-              <div className="text-xs mt-1">Try searching with first and last name</div>
+              <div className="font-bold">No actors found for "{query}"</div>
+              <div className="text-xs mt-1 text-gray-600">Try searching with first and last name</div>
             </div>
           ) : null}
         </div>
